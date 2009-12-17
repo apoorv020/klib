@@ -55,10 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DBConsoleTest.cs" />
     <Compile Include="DBHelper.cs" />
-    <Compile Include="EndpointHelpers.cs" />
-    <Compile Include="AWSConsoleTest.cs" />
+    <Compile Include="AWSHelper.cs" />
     <Compile Include="KDb.cs">
       <DependentUpon>KDb.dbml</DependentUpon>
     </Compile>
