@@ -9,129 +9,221 @@ using System.Data.Linq;
 using System.Data.Linq.Mapping;
 using System.Text;
 using System.Data.SqlClient;
+// Do NOT import Klib
 
-namespace Klib
+namespace Public
 {
     public class DBHelper
     {
-        protected KDbDataContext db;
+        private static Klib.KDbDataContext db;
 
-        public DBHelper(ConnectionString connectionPath)
+        public class AWSInfo
         {
-            // Construct the helper with the connectionString
-            db = new KDbDataContext(connectionPath);
+            // Klib.AWSInfo is not exposed; it contains auto-generated LINQ
+            // This Public.AWSInfo automatically maps to Klib.AWSInfo
+            public int UID;
+            public string Title;
+            public string Author;
+            public string ISBN10;
+            public string ISBN13;
+            public string URL;
+
+            public AWSInfo(Klib.AWSInfo awsInfo)
+            {
+                // Constructs Public.AWSawsInfo from Klib.AWSawsInfo
+                this.UID = awsInfo.UID;
+                this.Title = awsInfo.Title;
+                this.Author = awsInfo.Author;
+                this.ISBN10 = awsInfo.ISBN10;
+                this.ISBN13 = awsInfo.ISBN13;
+                this.URL = awsInfo.URL;
+            }
+        }
+        public class Book
+        {
+            public int UID;
+            public string Title;
+            public string Author;
+            public string ISBN10;
+            public string ISBN13;
+            public int Owner;
+            public bool UniqueMap;
+
+            public Book(Klib.Book book)
+            {
+                // Constructs Public.Book from Klib.Book
+                this.UID = book.UID;
+                this.Title = book.Title;
+                this.Author = book.Author;
+                this.ISBN10 = book.ISBN10;
+                this.ISBN13 = book.ISBN13;
+                this.Owner = book.Owner;
+                this.UniqueMap = book.UniqueMap;
+            }
+
+            // BEGIN top level helpers
+            // TODO: Interface with RFID
+            public bool Borrow(Person person)
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this, person, true);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            public bool Return(Person person)
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this, person, false);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            // END top level helpers
+
+        }
+        public class Person
+        {
+            // Klib.Person is not exposed; it contains auto-generated LINQ
+            // This Public.Person automatically maps to Klib.Person
+            public int UID;
+            public string FirstName;
+            public string LastName;
+            public string Location;
+
+            public Person(Klib.Person person)
+            {
+                // Constructs Public.Person from Klib.Person
+                this.UID = person.UID;
+                this.FirstName = person.FirstName;
+                this.LastName = person.LastName;
+                this.Location = person.Location;
+            }
+        }
+        public DBHelper(string MY_SQL_USERNAME, string MY_SQL_PASSWORD, string MY_SQL_DATASOURCE)
+        {
+            // Constructor for DBHelper
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            builder.UserID = MY_SQL_USERNAME;
+            builder.Password = MY_SQL_PASSWORD;
+            builder.DataSource = MY_SQL_DATASOURCE;
+            db = new Klib.KDbDataContext(builder.ConnectionString);
         }
 
-        // ===  Get methods   ===
-        // ===     BEGIN      ===
-        
-        public Book getBookByUID(int UID)
+        // BEGIN Static Builders
+        private static Klib.Book Build(Book book)
         {
-            return db.Books
-                .Where(book => book.UID == UID)
-                .First();
+            var builtBook = new Klib.Book();
+            builtBook.UID = book.UID;
+            builtBook.Title = book.Title;
+            builtBook.Author = book.Author;
+            builtBook.Owner = book.Owner;
+            builtBook.ISBN10 = book.ISBN10;
+            builtBook.ISBN13 = book.ISBN13;
+            builtBook.UniqueMap = book.UniqueMap;
+            return builtBook;
         }
-        public Person getPersonByUID(int UID)
+        private static Klib.Person Build(Person person)
         {
-            return db.Persons
-                .Where(person => person.UID == UID)
-                .First();
+            var builtPerson = new Klib.Person();
+            builtPerson.UID = person.UID;
+            builtPerson.FirstName = person.FirstName;
+            builtPerson.LastName = person.LastName;
+            builtPerson.Location = person.Location;
+            return builtPerson;
         }
-        public Person getBorrowerByUID(int UID)
+        private static Klib.AWSInfo Build(AWSInfo awsInfo)
         {
-            try
-            {
-                return db.RelationshipMappers
-                    .Where(person => person.UID == UID)
-                    .First();
-            }
-            catch
-            {
-                return null;
-            }
+            var builtInfo = new Klib.AWSInfo();
+            builtInfo.UID = awsInfo.UID;
+            builtInfo.Title = awsInfo.Title;
+            builtInfo.Author = awsInfo.Author;
+            builtInfo.ISBN10 = awsInfo.ISBN10;
+            builtInfo.ISBN13 = awsInfo.ISBN13;
+            builtInfo.URL = awsInfo.URL;
+            return builtInfo;
         }
-        public Person searchPerson(string searchString)
-        {
-            try
-            {
-                return db.Persons
-                    .Where(person => person.FirstName.Equals(searchString))
-                    .First();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-        public Book searchBook(string searchString)
-        {
-            try
-            {
-                return db.Books
-                    .Where(book => book.Title.Equals(searchString))
-                    .First();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-        public int relationshipCount(int UID)
-        {
-            // Given a book UID, returns the number of people related to it
-            return db.RelationshipMappers
-                .Where(mapper => mapper.Resource == UID)
-                .Count();
-        }
-        
-        // ===  Get methods   ===
-        // ===      END       ===
+        // END Static Builders
 
-
-        // ===  Write methods ===
-        // ===     BEGIN      ===
-
-        public bool borrowBook(int bookUID, int personUID)
+        // BEGIN Static Writers
+        private static void Write(Book book)
         {
-            // TODO: Throw and catch error objects instead of a non-descriptive bool
-            if (relationshipCount(bookUID) >= 1)
-                return false;
-            var newRelation = new RelationshipMapper { UID = bookUID, Person = personUID };
-            db.RelationshipMappers.InsertOnSubmit(newRelation);
+            var newBook = Build(book);
+            db.Books.InsertOnSubmit(newBook);
             db.SubmitChanges();
-            return true;
         }
-        public bool returnBook(int bookUID, int personUID)
+        private static void Write(Person person)
         {
-            // TODO: Throw and catch error objects instead of a non-descriptive bool
-            var mapBorrower = db.RelationshipMappers
-                .Where(mapper => mapper.Resource == bookUID)
-                .First();
-            if (mapBorrower.Person != personUID)
-                return false;
-            db.RelationshipMappers.DeleteOnSubmit(mapBorrower);
+            var newPerson = Build(person);
+            db.Persons.InsertOnSubmit(newPerson);
             db.SubmitChanges();
-            return true;
         }
-        public bool writeAWSInfo(int bookUID, string Title, string Author, string ISBN10, string ISBN13, string URL)
+        private static void Write(Book book, AWSInfo awsInfo)
         {
-            // Given a bookUID and corresponding information from AWS, writes information to DB
-            // TODO: Encapsulate this two-step process in a transaction
-
-            // STEP 1: Write the AWSInfo
-            var newAWSInfo = new AWSInfo { Title = Title, Author = Author, ISBN10 = ISBN10, ISBN13 = ISBN13, URL = URL };
+            // For AWSInfo and associated Book
+            var newAWSInfo = Build(awsInfo);
+            var newMapper = new Klib.BookMapper();
+            newMapper.AWSInfo = awsInfo.UID;
+            newMapper.Book = book.UID;
             db.AWSInfos.InsertOnSubmit(newAWSInfo);
-            db.SubmitChanges();
-
-            // STEP 2: Write a BookMapper entry
-            // TODO: Catch FKey constraint violation error
-            var newMapper = new BookMapper { AWSInfo = newAWSInfo.UID, Book = bookUID };
             db.BookMappers.InsertOnSubmit(newMapper);
             db.SubmitChanges();
-            return true;
         }
+        private static void Write(Book book, Person person, bool borrowFlag)
+        {
+            // For borrow and return
+            var newBook = Build(book);
+            var newPerson = Build(person);
+            var newMapper = new Klib.RelationshipMapper { Person = newPerson.UID, Book = newBook };
+            if (borrowFlag)
+                db.RelationshipMappers.InsertOnSubmit(newMapper);
+            else
+                db.RelationshipMappers.DeleteOnSubmit(newMapper);
+            db.SubmitChanges();
+        }
+        // END Static Writers
 
-        // ===  Write methods ===
-        // ===      END       ===
+        // BEGIN Utility functions
+        public Person SearchPerson(string FirstName, string LastName)
+        {
+            try
+            {
+                var thisPerson = db.Persons
+                    .Where(person => person.FirstName.Equals(FirstName))
+                    .Where(person => person.LastName.Equals(LastName))
+                    .First();
+                return new Person(thisPerson);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Book SearchBook(string searchString)
+        {
+            try
+            {
+                var thisBook = db.Books
+                    .Where(book => book.Title.Equals(searchString))
+                    .First();
+                return new Book(thisBook);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        // END Utility functions
+
     }
 }

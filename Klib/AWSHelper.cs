@@ -14,12 +14,13 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Klib.AWS.WSDL;
 
-namespace Klib
+namespace Public
 {
     public class AWSHelper
     {
         private ItemSearchRequest request;
         private AWSECommerceServicePortTypeClient client;
+        private ItemSearch itemSearch;
 
         public AWSHelper(string ENDPOINT, string MY_AWS_ACCESS_KEY_ID, string MY_AWS_SECRET_KEY, string NAMESPACE)
         {
@@ -41,16 +42,14 @@ namespace Klib
             request.SearchIndex = "Books";
             request.ResponseGroup = new string[] { "Medium" };
 
-            ItemSearch itemSearch = new ItemSearch();
-            itemSearch.Request = new ItemSearchRequest[] { request };
+            itemSearch = new ItemSearch();
             itemSearch.AWSAccessKeyId = MY_AWS_ACCESS_KEY_ID;
-
-            // issue the ItemSearch request
         }
         public Item[] Search(string searchTitle)
         {
-            // Exposed to programmer
+            // The master search interface
             request.Title = searchTitle;
+            itemSearch.Request = new ItemSearchRequest[] { request };
             var response = client.ItemSearch(itemSearch);
             return response.Items[0].Item;
         }
