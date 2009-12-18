@@ -18,6 +18,7 @@ using System;
  */
 
 using Public;
+using System.Data.SqlClient;
 
 namespace Program
 {
@@ -46,8 +47,33 @@ namespace Program
             var dbHandle = new DBHelper(MY_SQL_USERNAME, MY_SQL_PASSWORD, MY_SQL_DATASOURCE);
             var awsHandle = new AWSHelper(ENDPOINT, MY_AWS_ACCESS_KEY_ID, MY_AWS_SECRET_KEY, NAMESPACE);
 
-            var wbHandle = new ResourceWebsite.WebsiteBackend(dbHandle, awsHandle);
 
+
+            //SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            //builder.UserID = MY_SQL_USERNAME;
+            //builder.Password = MY_SQL_PASSWORD;
+            //builder.DataSource = MY_SQL_DATASOURCE;
+            //var db = new Klib.KDbDataContext(builder.ConnectionString);
+            //if (!db.DatabaseExists())
+            //{
+            //    db.CreateDatabase();
+            //    var p1 = new Klib.Person { FirstName = "A", LastName = "G", Location = "2028" };
+            //    //Klib.
+            //    db.Persons.InsertOnSubmit(p1);
+            //    var res1 = new Klib.Resource();
+            //    db.Resources.InsertOnSubmit(res1);
+            //    db.SubmitChanges();
+            //    var book1 = new Klib.Book 
+            //    { Author = "Schildt", Title = "Java", Owner = p1.UID, UniqueMap = false ,UID = res1.UID};
+            //    db.Books.InsertOnSubmit(book1);
+            //    db.SubmitChanges();
+            //}
+            
+
+            
+
+
+            var wbHandle = new ResourceWebsite.WebsiteBackend(dbHandle, awsHandle);
             var books = wbHandle.searchDBForBook("Java", "Schildt");
             if (books == null)
                 Console.WriteLine("No books found!");
@@ -60,7 +86,8 @@ namespace Program
                     var results = wbHandle.searchOnlineMatches(book);
                     foreach (var result in results)
                     {
-                        Console.WriteLine("Title:{0} ISBN:{1}", result.ItemAttributes.ISBN, result.ItemAttributes.ISBN);
+                        Console.WriteLine("Title:{0}\nAuthor:{2}\n ISBN:{1}", 
+                            result.ItemAttributes.Title, result.ItemAttributes.ISBN,result.ItemAttributes.Author[0]);
                     }
                 }
             }

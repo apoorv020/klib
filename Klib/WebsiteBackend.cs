@@ -26,10 +26,10 @@ namespace ResourceWebsite
         private AWSHelper awsHandle;
         private const string bookSearchType = "Books";
 
-        public WebsiteBackend(DBHelper dbHandle, AWSHelper awsHandle)
+        public WebsiteBackend(DBHelper _dbHandle, AWSHelper _awsHandle)
         {
-            this.awsHandle = awsHandle;
-            this.dbHandle = dbHandle;
+            this.awsHandle = _awsHandle;
+            this.dbHandle = _dbHandle;
         }
 
 
@@ -41,12 +41,15 @@ namespace ResourceWebsite
         /// <returns>Possible matches, null OW</returns>
         public Public.DBHelper.Book[] searchDBForBook(string Title, string Author)
         {
+            //var personReturned = dbHandle.SearchPerson("A", "G");
+
             var bookReturned = dbHandle.SearchBook(Title);
             if (bookReturned == null)
                 return null;
             Public.DBHelper.Book[] retValue = new Public.DBHelper.Book[] { bookReturned };
             return retValue;
         }
+
         /// <summary>
         ///     Returns an array of Online books that match the current book
         /// </summary>
@@ -87,6 +90,7 @@ namespace ResourceWebsite
             
             //TODO : add code to update the book in the database.
             //book.updateFunction();
+            book.Update();
             
         }
 
