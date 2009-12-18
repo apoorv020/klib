@@ -1,6 +1,15 @@
-﻿/* A collection of functions to help the user
- * interact with the DB
-*/
+﻿/* DBHelper.cs -- DB helper functions and classes
+ * 
+ * This file is part of Klib (http://github.com/artagnon/klib)
+ * Copyright (C) 2009 Ramkumar Ramachandra <artagnon@gmail.com>
+ * Copyright (C) 2009 Aproorv Gupta <apoorv020@gmail.com>
+ * 
+ * This work is licensed Public Domain.
+ * To view a copy of the public domain certification,
+ * visit http://creativecommons.org/licenses/publicdomain/ or
+ * send a letter to Creative Commons, 171 Second Street,
+ * Suite 300, San Francisco, California, 94105, USA.
+ */
 
 using System;
 using System.Collections.Generic;
@@ -46,7 +55,7 @@ namespace Public
             public string Author;
             public string ISBN10;
             public string ISBN13;
-            public int Owner;
+            public int Owner;           // This field is not in Klib.Book
             public bool UniqueMap;
 
             public Book(Klib.Book book)
@@ -127,7 +136,6 @@ namespace Public
             builtBook.UID = book.UID;
             builtBook.Title = book.Title;
             builtBook.Author = book.Author;
-            builtBook.Owner = book.Owner;
             builtBook.ISBN10 = book.ISBN10;
             builtBook.ISBN13 = book.ISBN13;
             builtBook.UniqueMap = book.UniqueMap;
@@ -159,6 +167,11 @@ namespace Public
         private static void Write(Book book)
         {
             var newBook = Build(book);
+            var newResource = new Klib.Resource();
+            newResource.Owner = book.Owner;
+            db.Resources.InsertOnSubmit(newResource);
+            db.SubmitChanges();
+            newBook.UID = newResource.UID;
             db.Books.InsertOnSubmit(newBook);
             db.SubmitChanges();
         }
@@ -182,9 +195,15 @@ namespace Public
         private static void Write(Book book, Person person, bool borrowFlag)
         {
             // For borrow and return
+            var newResource = new Klib.Resource();
             var newBook = Build(book);
             var newPerson = Build(person);
-            var newMapper = new Klib.RelationshipMapper { Person = newPerson.UID, Book = newBook };
+            newResource.Owner = newPerson.UID;
+            db.Resources.InsertOnSubmit(newResource);
+            db.SubmitChanges();
+            newBook.UID = newResource.UID;
+
+            var newMapper = new Klib.RelationshipMapper { Person = newPerson.UID, Resource =  newResource.UID};
             if (borrowFlag)
                 db.RelationshipMappers.InsertOnSubmit(newMapper);
             else

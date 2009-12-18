@@ -1,6 +1,17 @@
-﻿/* These endpoint helpers are used by ItemLookup.cs
- * for signing requests. AWS does not allow unsigned requests.
-*/
+﻿/* AWSHelper.cs -- A list of AWS helper functions and classes
+ * A lot of plumbing work is done to sign requests;
+ * AWS does not allow unsigned requests.
+ * 
+ * This file is part of Klib (http://github.com/artagnon/klib)
+ * Copyright (C) 2009 Ramkumar Ramachandra <artagnon@gmail.com>
+ * Copyright (C) 2009 Aproorv Gupta <apoorv020@gmail.com>
+ * 
+ * This work is licensed Public Domain.
+ * To view a copy of the public domain certification,
+ * visit http://creativecommons.org/licenses/publicdomain/ or
+ * send a letter to Creative Commons, 171 Second Street,
+ * Suite 300, San Francisco, California, 94105, USA.
+ */
 
 using System;
 using System.Text;
@@ -39,16 +50,16 @@ namespace Public
 
             // ItemSearchREquest
             request = new ItemSearchRequest();
-            request.SearchIndex = "Books";
             request.ResponseGroup = new string[] { "Medium" };
 
             itemSearch = new ItemSearch();
             itemSearch.AWSAccessKeyId = MY_AWS_ACCESS_KEY_ID;
         }
-        public Item[] Search(string searchTitle)
+        public Item[] Search(string searchTitle, string searchType)
         {
             // The master search interface
             request.Title = searchTitle;
+            request.SearchIndex = searchType;
             itemSearch.Request = new ItemSearchRequest[] { request };
             var response = client.ItemSearch(itemSearch);
             return response.Items[0].Item;
