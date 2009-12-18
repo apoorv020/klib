@@ -30,15 +30,24 @@ namespace Klib
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertAWSInfo(AWSInfo instance);
-    partial void UpdateAWSInfo(AWSInfo instance);
-    partial void DeleteAWSInfo(AWSInfo instance);
     partial void InsertBook(Book instance);
     partial void UpdateBook(Book instance);
     partial void DeleteBook(Book instance);
+    partial void InsertResource(Resource instance);
+    partial void UpdateResource(Resource instance);
+    partial void DeleteResource(Resource instance);
+    partial void InsertAWSInfo(AWSInfo instance);
+    partial void UpdateAWSInfo(AWSInfo instance);
+    partial void DeleteAWSInfo(AWSInfo instance);
     partial void InsertBookMapper(BookMapper instance);
     partial void UpdateBookMapper(BookMapper instance);
     partial void DeleteBookMapper(BookMapper instance);
+    partial void InsertMovie(Movie instance);
+    partial void UpdateMovie(Movie instance);
+    partial void DeleteMovie(Movie instance);
+    partial void InsertMusic(Music instance);
+    partial void UpdateMusic(Music instance);
+    partial void DeleteMusic(Music instance);
     partial void InsertPerson(Person instance);
     partial void UpdatePerson(Person instance);
     partial void DeletePerson(Person instance);
@@ -77,14 +86,6 @@ namespace Klib
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<AWSInfo> AWSInfos
-		{
-			get
-			{
-				return this.GetTable<AWSInfo>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Book> Books
 		{
 			get
@@ -93,11 +94,43 @@ namespace Klib
 			}
 		}
 		
+		public System.Data.Linq.Table<Resource> Resources
+		{
+			get
+			{
+				return this.GetTable<Resource>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AWSInfo> AWSInfos
+		{
+			get
+			{
+				return this.GetTable<AWSInfo>();
+			}
+		}
+		
 		public System.Data.Linq.Table<BookMapper> BookMappers
 		{
 			get
 			{
 				return this.GetTable<BookMapper>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Movie> Movies
+		{
+			get
+			{
+				return this.GetTable<Movie>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Music> Musics
+		{
+			get
+			{
+				return this.GetTable<Music>();
 			}
 		}
 		
@@ -115,6 +148,471 @@ namespace Klib
 			{
 				return this.GetTable<RelationshipMapper>();
 			}
+		}
+	}
+	
+	[Table(Name="dbo.Book")]
+	public partial class Book : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _UID;
+		
+		private string _Title;
+		
+		private string _Author;
+		
+		private string _ISBN10;
+		
+		private string _ISBN13;
+		
+		private bool _UniqueMap;
+		
+		private EntityRef<BookMapper> _BookMapper;
+		
+		private EntityRef<Resource> _Resource;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUIDChanging(int value);
+    partial void OnUIDChanged();
+    partial void OnTitleChanging(string value);
+    partial void OnTitleChanged();
+    partial void OnAuthorChanging(string value);
+    partial void OnAuthorChanged();
+    partial void OnISBN10Changing(string value);
+    partial void OnISBN10Changed();
+    partial void OnISBN13Changing(string value);
+    partial void OnISBN13Changed();
+    partial void OnUniqueMapChanging(bool value);
+    partial void OnUniqueMapChanged();
+    #endregion
+		
+		public Book()
+		{
+			this._BookMapper = default(EntityRef<BookMapper>);
+			this._Resource = default(EntityRef<Resource>);
+			OnCreated();
+		}
+		
+		[Column(Storage="_UID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int UID
+		{
+			get
+			{
+				return this._UID;
+			}
+			set
+			{
+				if ((this._UID != value))
+				{
+					if (this._Resource.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUIDChanging(value);
+					this.SendPropertyChanging();
+					this._UID = value;
+					this.SendPropertyChanged("UID");
+					this.OnUIDChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Title", DbType="NChar(100) NOT NULL", CanBeNull=false)]
+		public string Title
+		{
+			get
+			{
+				return this._Title;
+			}
+			set
+			{
+				if ((this._Title != value))
+				{
+					this.OnTitleChanging(value);
+					this.SendPropertyChanging();
+					this._Title = value;
+					this.SendPropertyChanged("Title");
+					this.OnTitleChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Author", DbType="NChar(100) NOT NULL", CanBeNull=false)]
+		public string Author
+		{
+			get
+			{
+				return this._Author;
+			}
+			set
+			{
+				if ((this._Author != value))
+				{
+					this.OnAuthorChanging(value);
+					this.SendPropertyChanging();
+					this._Author = value;
+					this.SendPropertyChanged("Author");
+					this.OnAuthorChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_ISBN10", DbType="NChar(10)")]
+		public string ISBN10
+		{
+			get
+			{
+				return this._ISBN10;
+			}
+			set
+			{
+				if ((this._ISBN10 != value))
+				{
+					this.OnISBN10Changing(value);
+					this.SendPropertyChanging();
+					this._ISBN10 = value;
+					this.SendPropertyChanged("ISBN10");
+					this.OnISBN10Changed();
+				}
+			}
+		}
+		
+		[Column(Storage="_ISBN13", DbType="NChar(13)")]
+		public string ISBN13
+		{
+			get
+			{
+				return this._ISBN13;
+			}
+			set
+			{
+				if ((this._ISBN13 != value))
+				{
+					this.OnISBN13Changing(value);
+					this.SendPropertyChanging();
+					this._ISBN13 = value;
+					this.SendPropertyChanged("ISBN13");
+					this.OnISBN13Changed();
+				}
+			}
+		}
+		
+		[Column(Storage="_UniqueMap", DbType="Bit NOT NULL")]
+		public bool UniqueMap
+		{
+			get
+			{
+				return this._UniqueMap;
+			}
+			set
+			{
+				if ((this._UniqueMap != value))
+				{
+					this.OnUniqueMapChanging(value);
+					this.SendPropertyChanging();
+					this._UniqueMap = value;
+					this.SendPropertyChanged("UniqueMap");
+					this.OnUniqueMapChanged();
+				}
+			}
+		}
+		
+		[Association(Name="Book_BookMapper", Storage="_BookMapper", ThisKey="UID", OtherKey="UID", IsUnique=true, IsForeignKey=false)]
+		public BookMapper BookMapper
+		{
+			get
+			{
+				return this._BookMapper.Entity;
+			}
+			set
+			{
+				BookMapper previousValue = this._BookMapper.Entity;
+				if (((previousValue != value) 
+							|| (this._BookMapper.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._BookMapper.Entity = null;
+						previousValue.Book1 = null;
+					}
+					this._BookMapper.Entity = value;
+					if ((value != null))
+					{
+						value.Book1 = this;
+					}
+					this.SendPropertyChanged("BookMapper");
+				}
+			}
+		}
+		
+		[Association(Name="Resource_Book", Storage="_Resource", ThisKey="UID", OtherKey="UID", IsForeignKey=true)]
+		public Resource Resource
+		{
+			get
+			{
+				return this._Resource.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resource.Entity;
+				if (((previousValue != value) 
+							|| (this._Resource.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resource.Entity = null;
+						previousValue.Book = null;
+					}
+					this._Resource.Entity = value;
+					if ((value != null))
+					{
+						value.Book = this;
+						this._UID = value.UID;
+					}
+					else
+					{
+						this._UID = default(int);
+					}
+					this.SendPropertyChanged("Resource");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[Table(Name="dbo.Resource")]
+	public partial class Resource : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _UID;
+		
+		private int _Owner;
+		
+		private EntityRef<Book> _Book;
+		
+		private EntityRef<Movie> _Movie;
+		
+		private EntityRef<Music> _Music;
+		
+		private EntitySet<RelationshipMapper> _RelationshipMappers;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUIDChanging(int value);
+    partial void OnUIDChanged();
+    partial void OnOwnerChanging(int value);
+    partial void OnOwnerChanged();
+    #endregion
+		
+		public Resource()
+		{
+			this._Book = default(EntityRef<Book>);
+			this._Movie = default(EntityRef<Movie>);
+			this._Music = default(EntityRef<Music>);
+			this._RelationshipMappers = new EntitySet<RelationshipMapper>(new Action<RelationshipMapper>(this.attach_RelationshipMappers), new Action<RelationshipMapper>(this.detach_RelationshipMappers));
+			OnCreated();
+		}
+		
+		[Column(Storage="_UID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int UID
+		{
+			get
+			{
+				return this._UID;
+			}
+			set
+			{
+				if ((this._UID != value))
+				{
+					this.OnUIDChanging(value);
+					this.SendPropertyChanging();
+					this._UID = value;
+					this.SendPropertyChanged("UID");
+					this.OnUIDChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Owner", DbType="Int NOT NULL")]
+		public int Owner
+		{
+			get
+			{
+				return this._Owner;
+			}
+			set
+			{
+				if ((this._Owner != value))
+				{
+					this.OnOwnerChanging(value);
+					this.SendPropertyChanging();
+					this._Owner = value;
+					this.SendPropertyChanged("Owner");
+					this.OnOwnerChanged();
+				}
+			}
+		}
+		
+		[Association(Name="Resource_Book", Storage="_Book", ThisKey="UID", OtherKey="UID", IsUnique=true, IsForeignKey=false)]
+		public Book Book
+		{
+			get
+			{
+				return this._Book.Entity;
+			}
+			set
+			{
+				Book previousValue = this._Book.Entity;
+				if (((previousValue != value) 
+							|| (this._Book.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Book.Entity = null;
+						previousValue.Resource = null;
+					}
+					this._Book.Entity = value;
+					if ((value != null))
+					{
+						value.Resource = this;
+					}
+					this.SendPropertyChanged("Book");
+				}
+			}
+		}
+		
+		[Association(Name="Resource_Movie", Storage="_Movie", ThisKey="UID", OtherKey="UID", IsUnique=true, IsForeignKey=false)]
+		public Movie Movie
+		{
+			get
+			{
+				return this._Movie.Entity;
+			}
+			set
+			{
+				Movie previousValue = this._Movie.Entity;
+				if (((previousValue != value) 
+							|| (this._Movie.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Movie.Entity = null;
+						previousValue.Resource = null;
+					}
+					this._Movie.Entity = value;
+					if ((value != null))
+					{
+						value.Resource = this;
+					}
+					this.SendPropertyChanged("Movie");
+				}
+			}
+		}
+		
+		[Association(Name="Resource_Music", Storage="_Music", ThisKey="UID", OtherKey="UID", IsUnique=true, IsForeignKey=false)]
+		public Music Music
+		{
+			get
+			{
+				return this._Music.Entity;
+			}
+			set
+			{
+				Music previousValue = this._Music.Entity;
+				if (((previousValue != value) 
+							|| (this._Music.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Music.Entity = null;
+						previousValue.Resource = null;
+					}
+					this._Music.Entity = value;
+					if ((value != null))
+					{
+						value.Resource = this;
+					}
+					this.SendPropertyChanged("Music");
+				}
+			}
+		}
+		
+		[Association(Name="Resource_RelationshipMapper", Storage="_RelationshipMappers", ThisKey="UID", OtherKey="Resource")]
+		public EntitySet<RelationshipMapper> RelationshipMappers
+		{
+			get
+			{
+				return this._RelationshipMappers;
+			}
+			set
+			{
+				this._RelationshipMappers.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_RelationshipMappers(RelationshipMapper entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource1 = this;
+		}
+		
+		private void detach_RelationshipMappers(RelationshipMapper entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource1 = null;
 		}
 	}
 	
@@ -162,7 +660,7 @@ namespace Klib
 			OnCreated();
 		}
 		
-		[Column(Storage="_UID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[Column(Storage="_UID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public int UID
 		{
 			get
@@ -332,272 +830,6 @@ namespace Klib
 		}
 	}
 	
-	[Table(Name="dbo.Book")]
-	public partial class Book : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _UID;
-		
-		private string _Title;
-		
-		private string _Author;
-		
-		private int _Owner;
-		
-		private string _ISBN10;
-		
-		private string _ISBN13;
-		
-		private bool _UniqueMap;
-		
-		private EntityRef<BookMapper> _BookMapper;
-		
-		private EntitySet<RelationshipMapper> _RelationshipMappers;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnUIDChanging(int value);
-    partial void OnUIDChanged();
-    partial void OnTitleChanging(string value);
-    partial void OnTitleChanged();
-    partial void OnAuthorChanging(string value);
-    partial void OnAuthorChanged();
-    partial void OnOwnerChanging(int value);
-    partial void OnOwnerChanged();
-    partial void OnISBN10Changing(string value);
-    partial void OnISBN10Changed();
-    partial void OnISBN13Changing(string value);
-    partial void OnISBN13Changed();
-    partial void OnUniqueMapChanging(bool value);
-    partial void OnUniqueMapChanged();
-    #endregion
-		
-		public Book()
-		{
-			this._BookMapper = default(EntityRef<BookMapper>);
-			this._RelationshipMappers = new EntitySet<RelationshipMapper>(new Action<RelationshipMapper>(this.attach_RelationshipMappers), new Action<RelationshipMapper>(this.detach_RelationshipMappers));
-			OnCreated();
-		}
-		
-		[Column(Storage="_UID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int UID
-		{
-			get
-			{
-				return this._UID;
-			}
-			set
-			{
-				if ((this._UID != value))
-				{
-					this.OnUIDChanging(value);
-					this.SendPropertyChanging();
-					this._UID = value;
-					this.SendPropertyChanged("UID");
-					this.OnUIDChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_Title", DbType="NChar(100) NOT NULL", CanBeNull=false)]
-		public string Title
-		{
-			get
-			{
-				return this._Title;
-			}
-			set
-			{
-				if ((this._Title != value))
-				{
-					this.OnTitleChanging(value);
-					this.SendPropertyChanging();
-					this._Title = value;
-					this.SendPropertyChanged("Title");
-					this.OnTitleChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_Author", DbType="NChar(100) NOT NULL", CanBeNull=false)]
-		public string Author
-		{
-			get
-			{
-				return this._Author;
-			}
-			set
-			{
-				if ((this._Author != value))
-				{
-					this.OnAuthorChanging(value);
-					this.SendPropertyChanging();
-					this._Author = value;
-					this.SendPropertyChanged("Author");
-					this.OnAuthorChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_Owner", DbType="Int NOT NULL")]
-		public int Owner
-		{
-			get
-			{
-				return this._Owner;
-			}
-			set
-			{
-				if ((this._Owner != value))
-				{
-					this.OnOwnerChanging(value);
-					this.SendPropertyChanging();
-					this._Owner = value;
-					this.SendPropertyChanged("Owner");
-					this.OnOwnerChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_ISBN10", DbType="NChar(10)")]
-		public string ISBN10
-		{
-			get
-			{
-				return this._ISBN10;
-			}
-			set
-			{
-				if ((this._ISBN10 != value))
-				{
-					this.OnISBN10Changing(value);
-					this.SendPropertyChanging();
-					this._ISBN10 = value;
-					this.SendPropertyChanged("ISBN10");
-					this.OnISBN10Changed();
-				}
-			}
-		}
-		
-		[Column(Storage="_ISBN13", DbType="NChar(13)")]
-		public string ISBN13
-		{
-			get
-			{
-				return this._ISBN13;
-			}
-			set
-			{
-				if ((this._ISBN13 != value))
-				{
-					this.OnISBN13Changing(value);
-					this.SendPropertyChanging();
-					this._ISBN13 = value;
-					this.SendPropertyChanged("ISBN13");
-					this.OnISBN13Changed();
-				}
-			}
-		}
-		
-		[Column(Storage="_UniqueMap", DbType="Bit NOT NULL")]
-		public bool UniqueMap
-		{
-			get
-			{
-				return this._UniqueMap;
-			}
-			set
-			{
-				if ((this._UniqueMap != value))
-				{
-					this.OnUniqueMapChanging(value);
-					this.SendPropertyChanging();
-					this._UniqueMap = value;
-					this.SendPropertyChanged("UniqueMap");
-					this.OnUniqueMapChanged();
-				}
-			}
-		}
-		
-		[Association(Name="Book_BookMapper", Storage="_BookMapper", ThisKey="UID", OtherKey="UID", IsUnique=true, IsForeignKey=false)]
-		public BookMapper BookMapper
-		{
-			get
-			{
-				return this._BookMapper.Entity;
-			}
-			set
-			{
-				BookMapper previousValue = this._BookMapper.Entity;
-				if (((previousValue != value) 
-							|| (this._BookMapper.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._BookMapper.Entity = null;
-						previousValue.Book1 = null;
-					}
-					this._BookMapper.Entity = value;
-					if ((value != null))
-					{
-						value.Book1 = this;
-					}
-					this.SendPropertyChanged("BookMapper");
-				}
-			}
-		}
-		
-		[Association(Name="Book_RelationshipMapper", Storage="_RelationshipMappers", ThisKey="UID", OtherKey="Resource")]
-		public EntitySet<RelationshipMapper> RelationshipMappers
-		{
-			get
-			{
-				return this._RelationshipMappers;
-			}
-			set
-			{
-				this._RelationshipMappers.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_RelationshipMappers(RelationshipMapper entity)
-		{
-			this.SendPropertyChanging();
-			entity.Book = this;
-		}
-		
-		private void detach_RelationshipMappers(RelationshipMapper entity)
-		{
-			this.SendPropertyChanging();
-			entity.Book = null;
-		}
-	}
-	
 	[Table(Name="dbo.BookMapper")]
 	public partial class BookMapper : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -609,6 +841,8 @@ namespace Klib
 		private int _Book;
 		
 		private int _AWSInfo;
+		
+		private int _Copies;
 		
 		private EntityRef<AWSInfo> _AWSInfo1;
 		
@@ -624,6 +858,8 @@ namespace Klib
     partial void OnBookChanged();
     partial void OnAWSInfoChanging(int value);
     partial void OnAWSInfoChanged();
+    partial void OnCopiesChanging(int value);
+    partial void OnCopiesChanged();
     #endregion
 		
 		public BookMapper()
@@ -633,7 +869,7 @@ namespace Klib
 			OnCreated();
 		}
 		
-		[Column(Storage="_UID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[Column(Storage="_UID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public int UID
 		{
 			get
@@ -693,6 +929,26 @@ namespace Klib
 					this._AWSInfo = value;
 					this.SendPropertyChanged("AWSInfo");
 					this.OnAWSInfoChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Copies", DbType="Int NOT NULL")]
+		public int Copies
+		{
+			get
+			{
+				return this._Copies;
+			}
+			set
+			{
+				if ((this._Copies != value))
+				{
+					this.OnCopiesChanging(value);
+					this.SendPropertyChanging();
+					this._Copies = value;
+					this.SendPropertyChanged("Copies");
+					this.OnCopiesChanged();
 				}
 			}
 		}
@@ -761,6 +1017,308 @@ namespace Klib
 						this._UID = default(int);
 					}
 					this.SendPropertyChanged("Book1");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[Table(Name="dbo.Movie")]
+	public partial class Movie : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _UID;
+		
+		private string _Name;
+		
+		private EntityRef<Resource> _Resource;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUIDChanging(int value);
+    partial void OnUIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    #endregion
+		
+		public Movie()
+		{
+			this._Resource = default(EntityRef<Resource>);
+			OnCreated();
+		}
+		
+		[Column(Storage="_UID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int UID
+		{
+			get
+			{
+				return this._UID;
+			}
+			set
+			{
+				if ((this._UID != value))
+				{
+					if (this._Resource.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUIDChanging(value);
+					this.SendPropertyChanging();
+					this._UID = value;
+					this.SendPropertyChanged("UID");
+					this.OnUIDChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Name", DbType="NChar(100)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[Association(Name="Resource_Movie", Storage="_Resource", ThisKey="UID", OtherKey="UID", IsForeignKey=true)]
+		public Resource Resource
+		{
+			get
+			{
+				return this._Resource.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resource.Entity;
+				if (((previousValue != value) 
+							|| (this._Resource.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resource.Entity = null;
+						previousValue.Movie = null;
+					}
+					this._Resource.Entity = value;
+					if ((value != null))
+					{
+						value.Movie = this;
+						this._UID = value.UID;
+					}
+					else
+					{
+						this._UID = default(int);
+					}
+					this.SendPropertyChanged("Resource");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[Table(Name="dbo.Music")]
+	public partial class Music : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _UID;
+		
+		private string _Track;
+		
+		private string _Artist;
+		
+		private string _Album;
+		
+		private EntityRef<Resource> _Resource;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUIDChanging(int value);
+    partial void OnUIDChanged();
+    partial void OnTrackChanging(string value);
+    partial void OnTrackChanged();
+    partial void OnArtistChanging(string value);
+    partial void OnArtistChanged();
+    partial void OnAlbumChanging(string value);
+    partial void OnAlbumChanged();
+    #endregion
+		
+		public Music()
+		{
+			this._Resource = default(EntityRef<Resource>);
+			OnCreated();
+		}
+		
+		[Column(Storage="_UID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int UID
+		{
+			get
+			{
+				return this._UID;
+			}
+			set
+			{
+				if ((this._UID != value))
+				{
+					if (this._Resource.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUIDChanging(value);
+					this.SendPropertyChanging();
+					this._UID = value;
+					this.SendPropertyChanged("UID");
+					this.OnUIDChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Track", DbType="NChar(10) NOT NULL", CanBeNull=false)]
+		public string Track
+		{
+			get
+			{
+				return this._Track;
+			}
+			set
+			{
+				if ((this._Track != value))
+				{
+					this.OnTrackChanging(value);
+					this.SendPropertyChanging();
+					this._Track = value;
+					this.SendPropertyChanged("Track");
+					this.OnTrackChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Artist", DbType="NChar(10)")]
+		public string Artist
+		{
+			get
+			{
+				return this._Artist;
+			}
+			set
+			{
+				if ((this._Artist != value))
+				{
+					this.OnArtistChanging(value);
+					this.SendPropertyChanging();
+					this._Artist = value;
+					this.SendPropertyChanged("Artist");
+					this.OnArtistChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Album", DbType="NChar(10)")]
+		public string Album
+		{
+			get
+			{
+				return this._Album;
+			}
+			set
+			{
+				if ((this._Album != value))
+				{
+					this.OnAlbumChanging(value);
+					this.SendPropertyChanging();
+					this._Album = value;
+					this.SendPropertyChanged("Album");
+					this.OnAlbumChanged();
+				}
+			}
+		}
+		
+		[Association(Name="Resource_Music", Storage="_Resource", ThisKey="UID", OtherKey="UID", IsForeignKey=true)]
+		public Resource Resource
+		{
+			get
+			{
+				return this._Resource.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resource.Entity;
+				if (((previousValue != value) 
+							|| (this._Resource.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resource.Entity = null;
+						previousValue.Music = null;
+					}
+					this._Resource.Entity = value;
+					if ((value != null))
+					{
+						value.Music = this;
+						this._UID = value.UID;
+					}
+					else
+					{
+						this._UID = default(int);
+					}
+					this.SendPropertyChanged("Resource");
 				}
 			}
 		}
@@ -962,9 +1520,9 @@ namespace Klib
 		
 		private string _Type;
 		
-		private EntityRef<Book> _Book;
-		
 		private EntityRef<Person> _Person1;
+		
+		private EntityRef<Resource> _Resource1;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -982,12 +1540,12 @@ namespace Klib
 		
 		public RelationshipMapper()
 		{
-			this._Book = default(EntityRef<Book>);
 			this._Person1 = default(EntityRef<Person>);
+			this._Resource1 = default(EntityRef<Resource>);
 			OnCreated();
 		}
 		
-		[Column(Storage="_UID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[Column(Storage="_UID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public int UID
 		{
 			get
@@ -1042,7 +1600,7 @@ namespace Klib
 			{
 				if ((this._Resource != value))
 				{
-					if (this._Book.HasLoadedOrAssignedValue)
+					if (this._Resource1.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -1071,40 +1629,6 @@ namespace Klib
 					this._Type = value;
 					this.SendPropertyChanged("Type");
 					this.OnTypeChanged();
-				}
-			}
-		}
-		
-		[Association(Name="Book_RelationshipMapper", Storage="_Book", ThisKey="Resource", OtherKey="UID", IsForeignKey=true)]
-		public Book Book
-		{
-			get
-			{
-				return this._Book.Entity;
-			}
-			set
-			{
-				Book previousValue = this._Book.Entity;
-				if (((previousValue != value) 
-							|| (this._Book.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Book.Entity = null;
-						previousValue.RelationshipMappers.Remove(this);
-					}
-					this._Book.Entity = value;
-					if ((value != null))
-					{
-						value.RelationshipMappers.Add(this);
-						this._Resource = value.UID;
-					}
-					else
-					{
-						this._Resource = default(int);
-					}
-					this.SendPropertyChanged("Book");
 				}
 			}
 		}
@@ -1139,6 +1663,40 @@ namespace Klib
 						this._Person = default(int);
 					}
 					this.SendPropertyChanged("Person1");
+				}
+			}
+		}
+		
+		[Association(Name="Resource_RelationshipMapper", Storage="_Resource1", ThisKey="Resource", OtherKey="UID", IsForeignKey=true)]
+		public Resource Resource1
+		{
+			get
+			{
+				return this._Resource1.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resource1.Entity;
+				if (((previousValue != value) 
+							|| (this._Resource1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resource1.Entity = null;
+						previousValue.RelationshipMappers.Remove(this);
+					}
+					this._Resource1.Entity = value;
+					if ((value != null))
+					{
+						value.RelationshipMappers.Add(this);
+						this._Resource = value.UID;
+					}
+					else
+					{
+						this._Resource = default(int);
+					}
+					this.SendPropertyChanged("Resource1");
 				}
 			}
 		}

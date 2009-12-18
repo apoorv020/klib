@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.375, 8.625" name="KDb">
+  <DataContextMoniker Name="/KDbDataContext" />
+  <nestedChildShapes>
+    <classShape Id="56bf17dc-d59d-41d5-ae8b-21f35f33e3f2" absoluteBounds="4.25, 3.125, 2, 1.9631982421875">
+      <DataClassMoniker Name="/KDbDataContext/Book" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1bd87de8-6ad9-4bc8-91b1-08ad647a7bbb" absoluteBounds="4.2650000000000006, 3.585, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="e71e319d-4981-4858-b9ca-8686f1f3cd46" absoluteBounds="6.625, 5.25, 2, 1.1939925130208333">
+      <DataClassMoniker Name="/KDbDataContext/Resource" />
+      <nestedChildShapes>
+        <elementListCompartment Id="68f53fd0-3d08-4f9e-8b36-66a0524e22f1" absoluteBounds="6.64, 5.71, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.625 : 5.25); (6.25 : 5.0881982421875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/KDbDataContext/Resource/Resource_Book" />
+      <nodes>
+        <classShapeMoniker Id="e71e319d-4981-4858-b9ca-8686f1f3cd46" />
+        <classShapeMoniker Id="56bf17dc-d59d-41d5-ae8b-21f35f33e3f2" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="fee6938a-e89a-4f61-8514-a58a3165de96" absoluteBounds="8.875, 2.875, 2, 1.9631982421875">
+      <DataClassMoniker Name="/KDbDataContext/AWSInfo" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0a10c126-d099-4567-ae96-909227a95dcb" absoluteBounds="8.89, 3.335, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="141e5974-9751-46a4-83f2-f9eac4082101" absoluteBounds="6.5, 3.25, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/KDbDataContext/BookMapper" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0fafeaae-a9dd-48db-ac49-17526b9b0f37" absoluteBounds="6.515, 3.71, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(8.875 : 4.03929768880208); (8.5 : 4.03929768880208)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/KDbDataContext/AWSInfo/AWSInfo_BookMapper" />
+      <nodes>
+        <classShapeMoniker Id="fee6938a-e89a-4f61-8514-a58a3165de96" />
+        <classShapeMoniker Id="141e5974-9751-46a4-83f2-f9eac4082101" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.25 : 4.03929768880208); (6.5 : 4.03929768880208)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/KDbDataContext/Book/Book_BookMapper" />
+      <nodes>
+        <classShapeMoniker Id="56bf17dc-d59d-41d5-ae8b-21f35f33e3f2" />
+        <classShapeMoniker Id="141e5974-9751-46a4-83f2-f9eac4082101" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="43c55654-f4ff-4900-89ed-6364e5256f05" absoluteBounds="4.25, 5.25, 2, 1.1939925130208333">
+      <DataClassMoniker Name="/KDbDataContext/Movie" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5d151497-28b2-465e-bd70-d2332bf59a9a" absoluteBounds="4.2650000000000006, 5.71, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.625 : 5.87824875651042); (6.25 : 5.87824875651042)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/KDbDataContext/Resource/Resource_Movie" />
+      <nodes>
+        <classShapeMoniker Id="e71e319d-4981-4858-b9ca-8686f1f3cd46" />
+        <classShapeMoniker Id="43c55654-f4ff-4900-89ed-6364e5256f05" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="4b7c8701-22b4-40ba-8eb4-60360fb06d24" absoluteBounds="4.25, 6.75, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/KDbDataContext/Music" />
+      <nestedChildShapes>
+        <elementListCompartment Id="24606da6-7bbc-4aa8-a891-f9bac5217d0a" absoluteBounds="4.265, 7.21, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.625 : 6.44399251302083); (6.25 : 6.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/KDbDataContext/Resource/Resource_Music" />
+      <nodes>
+        <classShapeMoniker Id="e71e319d-4981-4858-b9ca-8686f1f3cd46" />
+        <classShapeMoniker Id="4b7c8701-22b4-40ba-8eb4-60360fb06d24" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="984c0e82-d51b-4ee3-9187-969e9838b6aa" absoluteBounds="9.125, 5, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/KDbDataContext/Person" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b2bd558c-572e-4f86-b1cf-c4ca4eb48896" absoluteBounds="9.14, 5.4600000000000009, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="141f4eca-ce7c-490b-ade9-607a8f75868d" absoluteBounds="7.25, 6.75, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/KDbDataContext/RelationshipMapper" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0585014f-b3f7-4db7-9ec0-32c087495190" absoluteBounds="7.265, 7.21, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(10.1875005 : 6.57859537760417); (10.1875005 : 7.53929768880208); (9.25 : 7.53929768880208)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/KDbDataContext/Person/Person_RelationshipMapper" />
+      <nodes>
+        <classShapeMoniker Id="984c0e82-d51b-4ee3-9187-969e9838b6aa" />
+        <classShapeMoniker Id="141f4eca-ce7c-490b-ade9-607a8f75868d" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(7.9375 : 6.44399251302083); (7.9375 : 6.75)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/KDbDataContext/Resource/Resource_RelationshipMapper" />
+      <nodes>
+        <classShapeMoniker Id="e71e319d-4981-4858-b9ca-8686f1f3cd46" />
+        <classShapeMoniker Id="141f4eca-ce7c-490b-ade9-607a8f75868d" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>
