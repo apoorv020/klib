@@ -55,7 +55,8 @@ namespace Public
             public string Author;
             public string ISBN10;
             public string ISBN13;
-            public int Owner;           // This field is not in Klib.Book
+            public int Owner;
+            public int Borrowers;
             public bool UniqueMap;
 
             public Book(Klib.Book book)
@@ -68,6 +69,62 @@ namespace Public
                 this.ISBN13 = book.ISBN13;
                 this.Owner = book.Owner;
                 this.UniqueMap = book.UniqueMap;
+            }
+            // BEGIN top level helpers
+            // TODO: Interface with RFID
+            public bool Borrow(Person person)
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this, person, true);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            public bool Return(Person person)
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this, person, false);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            public bool Update()
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            // END top level helpers
+        }
+        public class Movie
+        {
+            public int UID;
+            public string Title;
+            public int Year;
+
+            public Movie(Klib.Movie movie)
+            {
+                // Constructs Public.Movie from Klib.Movie
+                this.UID = movie.UID;
+                this.Title = movie.Title;
+                this.Year = movie.Year;
             }
 
             // BEGIN top level helpers
@@ -98,8 +155,20 @@ namespace Public
                     return false;
                 }
             }
+            public bool Update()
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
             // END top level helpers
-
         }
         public class Person
         {
@@ -141,6 +210,14 @@ namespace Public
             builtBook.UniqueMap = book.UniqueMap;
             return builtBook;
         }
+        private static Klib.Movie Build(Movie movie)
+        {
+            var builtMovie = new Klib.Movie();
+            builtMovie.UID = movie.UID;
+            builtMovie.Title = movie.Title;
+            builtMovie.Year = movie.Year;
+            return builtMovie;
+        }
         private static Klib.Person Build(Person person)
         {
             var builtPerson = new Klib.Person();
@@ -164,24 +241,69 @@ namespace Public
         // END Static Builders
 
         // BEGIN Static Writers
-        private static void Write(Book book)
+        private static int WriteResource(Book book)
         {
-            var newBook = Build(book);
             var newResource = new Klib.Resource();
-            newResource.Owner = book.Owner;
             db.Resources.InsertOnSubmit(newResource);
             db.SubmitChanges();
-            newBook.UID = newResource.UID;
+            return newResource.UID;
+        }
+        private static int WriteResource(Movie movie)
+        {
+            var newResource = new Klib.Resource();
+            db.Resources.InsertOnSubmit(newResource);
+            db.SubmitChanges();
+            return newResource.UID;
+        }
+
+        private static void Write(Book book)
+        {
+            // For writing new book and updating exisitng book
+            var newBook = new Klib.Book();
+            var existingBookCount = db.Books
+                .Select(thisBook => thisBook.UID == book.UID)
+                .Count();
+            if (existingBookCount == 0)
+            {
+                int resourceUID = WriteResource(book);
+                newBook.UID = resourceUID;
+            }
+            else
+                newBook = Build(book);
             db.Books.InsertOnSubmit(newBook);
+            db.SubmitChanges();
+        }
+        private static void Write(Movie movie)
+        {
+            // For writing new book and updating exisitng book
+            var newMovie = new Klib.Movie();
+            var existingMovieCount = db.Movies
+                .Select(thisMovie => thisMovie.UID == movie.UID)
+                .Count();
+            if (existingMovieCount == 0)
+            {
+                int resourceUID = WriteResource(movie);
+                newMovie.UID = resourceUID;
+            }
+            else
+                newMovie = Build(movie);
+            db.Movies.InsertOnSubmit(newMovie);
             db.SubmitChanges();
         }
         private static void Write(Person person)
         {
-            var newPerson = Build(person);
+            // For writing new person and updating exisitng person
+            var newPerson = new Klib.Person();
+            var existingPersonCount = db.Persons
+                .Select(thisPerson => thisPerson.UID == person.UID)
+                .Count();
+            newPerson = Build(person);
+            if (existingPersonCount == 0)
+                newPerson.UID = person.UID;
             db.Persons.InsertOnSubmit(newPerson);
             db.SubmitChanges();
         }
-        private static void Write(Book book, AWSInfo awsInfo)
+        private static void Write(AWSInfo awsInfo, Book book)
         {
             // For AWSInfo and associated Book
             var newAWSInfo = Build(awsInfo);
@@ -198,16 +320,32 @@ namespace Public
             var newResource = new Klib.Resource();
             var newBook = Build(book);
             var newPerson = Build(person);
-            newResource.Owner = newPerson.UID;
             db.Resources.InsertOnSubmit(newResource);
             db.SubmitChanges();
             newBook.UID = newResource.UID;
 
-            var newMapper = new Klib.RelationshipMapper { Person = newPerson.UID, Resource =  newResource.UID};
+            var newMapper = new Klib.ResourceMapper { Person = newPerson.UID, Resource =  newResource.UID};
             if (borrowFlag)
-                db.RelationshipMappers.InsertOnSubmit(newMapper);
+                db.ResourceMappers.InsertOnSubmit(newMapper);
             else
-                db.RelationshipMappers.DeleteOnSubmit(newMapper);
+                db.ResourceMappers.DeleteOnSubmit(newMapper);
+            db.SubmitChanges();
+        }
+        private static void Write(Movie movie, Person person, bool borrowFlag)
+        {
+            // For borrow and return
+            var newResource = new Klib.Resource();
+            var newMovie = Build(movie);
+            var newPerson = Build(person);
+            db.Resources.InsertOnSubmit(newResource);
+            db.SubmitChanges();
+            newMovie.UID = newResource.UID;
+
+            var newMapper = new Klib.ResourceMapper { Person = newPerson.UID, Resource =  newResource.UID};
+            if (borrowFlag)
+                db.ResourceMappers.InsertOnSubmit(newMapper);
+            else
+                db.ResourceMappers.DeleteOnSubmit(newMapper);
             db.SubmitChanges();
         }
         // END Static Writers
