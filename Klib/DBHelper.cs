@@ -131,6 +131,7 @@ namespace Public
             public int UID;
             public string Title;
             public int Year;
+            public int Owner;
 
             public Movie(Klib.Movie movie)
             {
@@ -138,6 +139,7 @@ namespace Public
                 this.UID = movie.UID;
                 this.Title = movie.Title;
                 this.Year = movie.Year;
+                this.Owner = movie.Owner;
             }
 
             // BEGIN top level helpers
@@ -183,6 +185,68 @@ namespace Public
             }
             // END top level helpers
         }
+        public class Music
+        {
+            public int UID;
+            public string Track;
+            public string Artist;
+            public string Album;
+            public int Owner;
+
+            public Music(Klib.Music music)
+            {
+                // Constructs Public.Movie from Klib.Movie
+                this.UID = music.UID;
+                this.Track = music.Track;
+                this.Artist = music.Artist;
+                this.Album = music.Album;
+                this.Owner = music.Owner;
+            }
+
+            // BEGIN top level helpers
+            // TODO: Interface with RFID
+            public bool Borrow(Person person)
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this, person, true);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            public bool Return(Person person)
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this, person, false);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            public bool Update()
+            {
+                // TODO: Throw and catch error objects instead of a non-descriptive bool
+                try
+                {
+                    Write(this);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            // END top level helpers
+        }
+
         public class Person
         {
             // Klib.Person is not exposed; it contains auto-generated LINQ
@@ -222,6 +286,7 @@ namespace Public
             builtBook.ISBN10 = book.ISBN10;
             builtBook.ISBN13 = book.ISBN13;
             builtBook.UniqueMap = book.UniqueMap;
+            builtBook.Owner = book.Owner;
             return builtBook;
         }
         private static Klib.Movie Build(Movie movie)
@@ -230,7 +295,18 @@ namespace Public
             builtMovie.UID = movie.UID;
             builtMovie.Title = movie.Title;
             builtMovie.Year = movie.Year;
+            builtMovie.Owner = movie.Owner;
             return builtMovie;
+        }
+        private static Klib.Music Build(Music music)
+        {
+            var builtMusic = new Klib.Music();
+            builtMusic.UID = music.UID;
+            builtMusic.Track = music.Track;
+            builtMusic.Artist = music.Artist;
+            builtMusic.Album = music.Album;
+            builtMusic.Owner = music.Owner;
+            return builtMusic;
         }
         private static Klib.Person Build(Person person)
         {
@@ -255,21 +331,13 @@ namespace Public
         // END Static Builders
 
         // BEGIN Static Writers
-        private static int WriteResource(Book book)
+        private static int WriteResource()
         {
             var newResource = new Klib.Resource();
             db.Resources.InsertOnSubmit(newResource);
             db.SubmitChanges();
             return newResource.UID;
         }
-        private static int WriteResource(Movie movie)
-        {
-            var newResource = new Klib.Resource();
-            db.Resources.InsertOnSubmit(newResource);
-            db.SubmitChanges();
-            return newResource.UID;
-        }
-
         private static void Write(Book book)
         {
             // For writing new book and updating exisitng book
@@ -279,7 +347,7 @@ namespace Public
                 .Count();
             if (existingBookCount == 0)
             {
-                int resourceUID = WriteResource(book);
+                int resourceUID = WriteResource();
                 newBook.UID = resourceUID;
             }
             else
@@ -296,7 +364,7 @@ namespace Public
                 .Count();
             if (existingMovieCount == 0)
             {
-                int resourceUID = WriteResource(movie);
+                int resourceUID = WriteResource();
                 newMovie.UID = resourceUID;
             }
             else
@@ -304,6 +372,24 @@ namespace Public
             db.Movies.InsertOnSubmit(newMovie);
             db.SubmitChanges();
         }
+        private static void Write(Music music)
+        {
+            // For writing new book and updating exisitng book
+            var newMusic = new Klib.Music();
+            var existingMovieCount = db.Movies
+                .Select(thisMusic => thisMusic.UID == music.UID)
+                .Count();
+            if (existingMovieCount == 0)
+            {
+                int resourceUID = WriteResource();
+                newMusic.UID = resourceUID;
+            }
+            else
+                newMusic = Build(music);
+            db.Musics.InsertOnSubmit(newMusic);
+            db.SubmitChanges();
+        }
+
         private static void Write(Person person)
         {
             // For writing new person and updating exisitng person
@@ -338,7 +424,7 @@ namespace Public
             db.SubmitChanges();
             newBook.UID = newResource.UID;
 
-            var newMapper = new Klib.ResourceMapper { Person = newPerson.UID, Resource =  newResource.UID};
+            var newMapper = new Klib.ResourceMapper { Person = newPerson.UID, Resource = newResource.UID};
             if (borrowFlag)
                 db.ResourceMappers.InsertOnSubmit(newMapper);
             else
@@ -355,7 +441,24 @@ namespace Public
             db.SubmitChanges();
             newMovie.UID = newResource.UID;
 
-            var newMapper = new Klib.ResourceMapper { Person = newPerson.UID, Resource =  newResource.UID};
+            var newMapper = new Klib.ResourceMapper { Person = newPerson.UID, Resource = newResource.UID};
+            if (borrowFlag)
+                db.ResourceMappers.InsertOnSubmit(newMapper);
+            else
+                db.ResourceMappers.DeleteOnSubmit(newMapper);
+            db.SubmitChanges();
+        }
+        private static void Write(Music music, Person person, bool borrowFlag)
+        {
+            // For borrow and return
+            var newResource = new Klib.Resource();
+            var newMovie = Build(music);
+            var newPerson = Build(person);
+            db.Resources.InsertOnSubmit(newResource);
+            db.SubmitChanges();
+            newMovie.UID = newResource.UID;
+
+            var newMapper = new Klib.ResourceMapper { Person = newPerson.UID, Resource = newResource.UID };
             if (borrowFlag)
                 db.ResourceMappers.InsertOnSubmit(newMapper);
             else
