@@ -9,18 +9,62 @@
       <Column Name="ISBN10" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
       <Column Name="ISBN13" Type="System.String" DbType="NChar(13)" CanBeNull="true" />
       <Column Name="UniqueMap" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Owner" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Association Name="Book_BookMapper" Member="BookMapper" ThisKey="UID" OtherKey="UID" Type="BookMapper" Cardinality="One" />
       <Association Name="Resource_Book" Member="Resource" ThisKey="UID" OtherKey="UID" Type="Resource" IsForeignKey="true" />
+      <Association Name="Person_Book" Member="Person" ThisKey="Owner" OtherKey="UID" Type="Person" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Music" Member="Musics">
+    <Type Name="Music">
+      <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Track" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Artist" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="Album" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="Owner" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Resource_Music" Member="Resource" ThisKey="UID" OtherKey="UID" Type="Resource" IsForeignKey="true" />
+      <Association Name="Person_Music" Member="Person" ThisKey="Owner" OtherKey="UID" Type="Person" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BookMapper" Member="BookMappers">
+    <Type Name="BookMapper">
+      <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Book" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AWSInfo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Copies" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Book_BookMapper" Member="Book1" ThisKey="UID" OtherKey="UID" Type="Book" IsForeignKey="true" />
+      <Association Name="AWSInfo_BookMapper" Member="AWSInfo1" ThisKey="UID" OtherKey="UID" Type="AWSInfo" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ResourceMapper" Member="ResourceMappers">
+    <Type Name="ResourceMapper">
+      <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Person" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Resource" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Type" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Resource_ResourceMapper" Member="Resource1" ThisKey="Resource" OtherKey="UID" Type="Resource" IsForeignKey="true" />
+      <Association Name="Person_ResourceMapper" Member="Person1" ThisKey="Person" OtherKey="UID" Type="Person" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Resource" Member="Resources">
     <Type Name="Resource">
       <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Owner" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Association Name="Resource_Book" Member="Book" ThisKey="UID" OtherKey="UID" Type="Book" Cardinality="One" />
-      <Association Name="Resource_Movie" Member="Movie" ThisKey="UID" OtherKey="UID" Type="Movie" Cardinality="One" />
       <Association Name="Resource_Music" Member="Music" ThisKey="UID" OtherKey="UID" Type="Music" Cardinality="One" />
-      <Association Name="Resource_RelationshipMapper" Member="RelationshipMappers" ThisKey="UID" OtherKey="Resource" Type="RelationshipMapper" />
+      <Association Name="Resource_ResourceMapper" Member="ResourceMappers" ThisKey="UID" OtherKey="Resource" Type="ResourceMapper" />
+      <Association Name="Resource_Movie" Member="Movie" ThisKey="UID" OtherKey="UID" Type="Movie" Cardinality="One" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Person" Member="Persons">
+    <Type Name="Person">
+      <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NChar(40) NOT NULL" CanBeNull="false" />
+      <Column Name="LastName" Type="System.String" DbType="NChar(40) NOT NULL" CanBeNull="false" />
+      <Column Name="Location" Type="System.String" DbType="NChar(100)" CanBeNull="true" />
+      <Association Name="Person_Book" Member="Books" ThisKey="UID" OtherKey="Owner" Type="Book" />
+      <Association Name="Person_Music" Member="Musics" ThisKey="UID" OtherKey="Owner" Type="Music" />
+      <Association Name="Person_ResourceMapper" Member="ResourceMappers" ThisKey="UID" OtherKey="Person" Type="ResourceMapper" />
+      <Association Name="Person_Movie" Member="Movies" ThisKey="UID" OtherKey="Owner" Type="Movie" />
     </Type>
   </Table>
   <Table Name="dbo.AWSInfo" Member="AWSInfos">
@@ -34,49 +78,14 @@
       <Association Name="AWSInfo_BookMapper" Member="BookMapper" ThisKey="UID" OtherKey="UID" Type="BookMapper" Cardinality="One" />
     </Type>
   </Table>
-  <Table Name="dbo.BookMapper" Member="BookMappers">
-    <Type Name="BookMapper">
-      <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Book" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="AWSInfo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Copies" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Association Name="AWSInfo_BookMapper" Member="AWSInfo1" ThisKey="UID" OtherKey="UID" Type="AWSInfo" IsForeignKey="true" />
-      <Association Name="Book_BookMapper" Member="Book1" ThisKey="UID" OtherKey="UID" Type="Book" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.Movie" Member="Movies">
     <Type Name="Movie">
       <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="NChar(100)" CanBeNull="true" />
+      <Column Name="Title" Type="System.String" DbType="NChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Year" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Owner" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Person_Movie" Member="Person" ThisKey="Owner" OtherKey="UID" Type="Person" IsForeignKey="true" />
       <Association Name="Resource_Movie" Member="Resource" ThisKey="UID" OtherKey="UID" Type="Resource" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Music" Member="Musics">
-    <Type Name="Music">
-      <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Track" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
-      <Column Name="Artist" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
-      <Column Name="Album" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
-      <Association Name="Resource_Music" Member="Resource" ThisKey="UID" OtherKey="UID" Type="Resource" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Person" Member="Persons">
-    <Type Name="Person">
-      <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="FirstName" Type="System.String" DbType="NChar(40) NOT NULL" CanBeNull="false" />
-      <Column Name="LastName" Type="System.String" DbType="NChar(40) NOT NULL" CanBeNull="false" />
-      <Column Name="Location" Type="System.String" DbType="NChar(100)" CanBeNull="true" />
-      <Association Name="Person_RelationshipMapper" Member="RelationshipMappers" ThisKey="UID" OtherKey="Person" Type="RelationshipMapper" />
-    </Type>
-  </Table>
-  <Table Name="dbo.RelationshipMapper" Member="RelationshipMappers">
-    <Type Name="RelationshipMapper">
-      <Column Name="UID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Person" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Resource" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Type" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
-      <Association Name="Person_RelationshipMapper" Member="Person1" ThisKey="Person" OtherKey="UID" Type="Person" IsForeignKey="true" />
-      <Association Name="Resource_RelationshipMapper" Member="Resource1" ThisKey="Resource" OtherKey="UID" Type="Resource" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
