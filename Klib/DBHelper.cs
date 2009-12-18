@@ -36,6 +36,7 @@ namespace Public
             public string ISBN10;
             public string ISBN13;
             public string URL;
+            public int AssociatedBookUID;          // Not in DB
 
             public AWSInfo(Klib.AWSInfo awsInfo)
             {
@@ -46,6 +47,18 @@ namespace Public
                 this.ISBN10 = awsInfo.ISBN10;
                 this.ISBN13 = awsInfo.ISBN13;
                 this.URL = awsInfo.URL;
+            }
+            public bool Update()
+            {
+                try
+                {
+                    Write(this);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
         public class Book
@@ -192,6 +205,7 @@ namespace Public
         {
             // Constructor for DBHelper
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            builder.InitialCatalog = "KDb";
             builder.UserID = MY_SQL_USERNAME;
             builder.Password = MY_SQL_PASSWORD;
             builder.DataSource = MY_SQL_DATASOURCE;
@@ -303,13 +317,13 @@ namespace Public
             db.Persons.InsertOnSubmit(newPerson);
             db.SubmitChanges();
         }
-        private static void Write(AWSInfo awsInfo, Book book)
+        private static void Write(AWSInfo awsInfo)
         {
-            // For AWSInfo and associated Book
+            // For AWSInfo
             var newAWSInfo = Build(awsInfo);
             var newMapper = new Klib.BookMapper();
             newMapper.AWSInfo = awsInfo.UID;
-            newMapper.Book = book.UID;
+            newMapper.Book = awsInfo.AssociatedBookUID;
             db.AWSInfos.InsertOnSubmit(newAWSInfo);
             db.BookMappers.InsertOnSubmit(newMapper);
             db.SubmitChanges();
