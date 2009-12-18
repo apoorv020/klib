@@ -56,7 +56,7 @@ namespace ResourceWebsite
         {
             if(book.UniqueMap)
                 return null; //Throw exception instead?
-            return awsHandle.Search(book.Title, bookSearchType);
+            return awsHandle.Search(book.Title, book.Author, bookSearchType);
         }
         /// <summary>
         ///     Resolves specified book to the givenm search Result

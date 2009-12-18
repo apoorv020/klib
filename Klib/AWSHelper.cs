@@ -55,10 +55,11 @@ namespace Public
             itemSearch = new ItemSearch();
             itemSearch.AWSAccessKeyId = MY_AWS_ACCESS_KEY_ID;
         }
-        public Item[] Search(string searchTitle, string searchType)
+        public Item[] Search(string searchTitle, string searchAuthor, string searchType)
         {
             // The master search interface
             request.Title = searchTitle;
+            request.Author = searchAuthor;
             request.SearchIndex = searchType;
             itemSearch.Request = new ItemSearchRequest[] { request };
             var response = client.ItemSearch(itemSearch);
