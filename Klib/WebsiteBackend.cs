@@ -51,6 +51,7 @@ namespace ResourceWebsite
         /// <param name="book">Book object to update</param>
         /// <param name="item">Online result whose attributes to use</param>
         /// <remarks>
+        ///     Use the PreviousPageProperty to post objects from 1 page to another.
         ///     Search for a book in DB, then get online results.
         ///     Match one of those results to the book.
         /// </remarks>
@@ -70,10 +71,10 @@ namespace ResourceWebsite
                 book.ISBN10 = item.ItemAttributes.ISBN;
             else if (item.ItemAttributes.ISBN.Length == 13)
                 book.ISBN13 = item.ItemAttributes.ISBN;
+            
             //TODO : add code to update the book in the database.
-
-            //book.
-            //Assert.;
+            //book.updateFunction();
+            
         }
 
     }
