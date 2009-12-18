@@ -39,6 +39,8 @@ namespace ResourceWebsite
         /// <param name="Title">Title of book to search</param>
         /// <param name="Author">Currently Unused, Author of book to search for</param>
         /// <returns>Possible matches, null OW</returns>
+        
+
         public Public.DBHelper.Book[] searchDBForBook(string Title, string Author)
         {
             //var personReturned = dbHandle.SearchPerson("A", "G");
@@ -49,18 +51,38 @@ namespace ResourceWebsite
             Public.DBHelper.Book[] retValue = new Public.DBHelper.Book[] { bookReturned };
             return retValue;
         }
+        /// <summary>
+        ///     Searches DB for a person. Currently returns only 1 value.
+        /// </summary>
+        /// <param name="FirstName"> Firstname of the person </param>
+        /// <param name="LastName"> Lastname of the Person </param>
+        /// <returns> Array of possible persons </returns>
+        
+        
+        public Public.DBHelper.Person[] searchDBForPerson(string FirstName, string LastName)
+        {
+            var personReturned = dbHandle.SearchPerson(FirstName, LastName);
+            if (personReturned == null)
+                return null;
+            Public.DBHelper.Person[] retValue = new Public.DBHelper.Person[] { personReturned };
+            return retValue;
+        }
 
         /// <summary>
         ///     Returns an array of Online books that match the current book
         /// </summary>
         /// <param name="book">A book object present in database. Obtain by using searchDBForBook.</param>
         /// <returns> possible online matches, null if already matched</returns>
+        
+        
         public Klib.AWS.WSDL.Item[] searchOnlineMatches(DBHelper.Book book)
         {
+
             if(book.UniqueMap)
                 return null; //Throw exception instead?
             return awsHandle.Search(book.Title, book.Author, bookSearchType);
         }
+
         /// <summary>
         ///     Resolves specified book to the givenm search Result
         /// </summary>
@@ -72,6 +94,8 @@ namespace ResourceWebsite
         ///     Match one of those results to the book.
         /// </remarks>
         /// <see cref="searchOnlineMatches"/>
+        
+        
         public void resolveBookWithOnlineMatch(DBHelper.Book book, Klib.AWS.WSDL.Item item)
         {
             if (book.UniqueMap)
@@ -93,6 +117,23 @@ namespace ResourceWebsite
             book.Update();
             
         }
-
+        /// <summary>
+        ///     NOT WORKING
+        /// </summary>
+        /// <param name="book"></param>
+        /// <param name="person"></param>
+        public void borrowBookBy(DBHelper.Book book, DBHelper.Person person)
+        {
+            book.Borrow(person);
+        }
+        /// <summary>
+        ///     NOT WORKING
+        /// </summary>
+        /// <param name="book"></param>
+        /// <param name="person"></param>
+        public void returnBook(DBHelper.Book book, DBHelper.Person person)
+        {
+            book.Return(person);
+        }
     }
 }

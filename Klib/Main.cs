@@ -63,8 +63,7 @@ namespace Program
             //    var res1 = new Klib.Resource();
             //    db.Resources.InsertOnSubmit(res1);
             //    db.SubmitChanges();
-            //    var book1 = new Klib.Book 
-            //    { Author = "Schildt", Title = "Java", Owner = p1.UID, UniqueMap = false ,UID = res1.UID};
+            //    var book1 = new Klib.Book { Author = "Schildt", Title = "Java", Owner = p1.UID, UniqueMap = false, UID = res1.UID };
             //    db.Books.InsertOnSubmit(book1);
             //    db.SubmitChanges();
             //}
@@ -75,22 +74,24 @@ namespace Program
 
             var wbHandle = new ResourceWebsite.WebsiteBackend(dbHandle, awsHandle);
             var books = wbHandle.searchDBForBook("Java", "Schildt");
-            if (books == null)
-                Console.WriteLine("No books found!");
-            else
-            {
-                foreach (var book in books)
-                {
-                    Console.WriteLine(book);
-                    Console.WriteLine("Searching online");
-                    var results = wbHandle.searchOnlineMatches(book);
-                    foreach (var result in results)
-                    {
-                        Console.WriteLine("Title:{0}\nAuthor:{2}\n ISBN:{1}", 
-                            result.ItemAttributes.Title, result.ItemAttributes.ISBN,result.ItemAttributes.Author[0]);
-                    }
-                }
-            }
+            var person = wbHandle.searchDBForPerson("A", "G")[0];
+            wbHandle.borrowBookBy(books[0], person);
+            //if (books == null)
+            //    Console.WriteLine("No books found!");
+            //else
+            //{
+            //    foreach (var book in books)
+            //    {
+            //        Console.WriteLine(book);
+            //        Console.WriteLine("Searching online");
+            //        var results = wbHandle.searchOnlineMatches(book);
+            //        foreach (var result in results)
+            //        {
+            //            Console.WriteLine("Title:{0}\nAuthor:{2}\n ISBN:{1}", 
+            //                result.ItemAttributes.Title, result.ItemAttributes.ISBN,result.ItemAttributes.Author[0]);
+            //        }
+            //    }
+            //}
 
 
             //var results = awsHandle.Search("Harry Potter and the Chamber of Secrets", BOOK);
