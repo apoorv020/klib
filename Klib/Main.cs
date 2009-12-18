@@ -45,11 +45,32 @@ namespace Program
             // Instantiate the two helpers
             var dbHandle = new DBHelper(MY_SQL_USERNAME, MY_SQL_PASSWORD, MY_SQL_DATASOURCE);
             var awsHandle = new AWSHelper(ENDPOINT, MY_AWS_ACCESS_KEY_ID, MY_AWS_SECRET_KEY, NAMESPACE);
-            var results = awsHandle.Search("Harry Potter and the Chamber of Secrets", BOOK);
-            foreach (var result in results)
+
+            var wbHandle = new ResourceWebsite.WebsiteBackend(dbHandle, awsHandle);
+
+            var books = wbHandle.searchDBForBook("Java", "Schildt");
+            if (books == null)
+                Console.WriteLine("No books found!");
+            else
             {
-                Console.Out.WriteLine(result.ItemAttributes.ISBN);
+                foreach (var book in books)
+                {
+                    Console.WriteLine(book);
+                    Console.WriteLine("Searching online");
+                    var results = wbHandle.searchOnlineMatches(book);
+                    foreach (var result in results)
+                    {
+                        Console.WriteLine("Title:{0} ISBN:{1}", result.ItemAttributes.ISBN, result.ItemAttributes.ISBN);
+                    }
+                }
             }
+
+
+            //var results = awsHandle.Search("Harry Potter and the Chamber of Secrets", BOOK);
+            //foreach (var result in results)
+            //{
+            //    Console.Out.WriteLine(result.ItemAttributes.ISBN);
+            //}
             Console.ReadKey();
         }
     }
